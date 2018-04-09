@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+</head>
+<body>
+        <div class="container">
+                <h1>Object Search</h1>
+                <form id="topics-form">
+                        <label for="topics-input">Add any topics</label>
+                        <input type="text" id="topic-input">
+                        <br>
+                  
+                        <!-- Button triggers new object search to be added -->
+                        <input id="add-topic" type="submit" value="Add any topics">
+                      </form>
+            
+                <!-- gif will display here -->
+                <div id="topic-view"></div>
+            
+                <!-- Rendered Buttons will display here  -->
+                <div id="buttons-view"></div>
+            
+                
+    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script>
+var topics = ["spider bike", "race bike", "dirt bike", "sport bike"];
+var topicImage ="";
+//display function into html
+function displaytopicInfo() {
+    var topic = $(this).attr("data-name");
+    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+        topic + "&api_key=4ny2WVHdtFA1VleMrx4TguoWtICfvaGF&limit=10";
+
+
+
+
+$.ajax({
+          url: queryURL,
+          method: "GET"
+        }).then(function(response) {
+console.log(response);
+             //new div for topics
+             var topicDiv = $("<div class='topic'>");
+
+            // Storing the rating data
+            var rating = response.Rated;
+
+             // Creating an element to have the rating displayed
+          var pOne = $("<p>").text("Rating: " + rating);
+
+// Displaying the rating
+topicDiv.append(pOne);
+
+var imageUrl = response.data[0].images.original_still.url
+;
+//get image with attribute
+var topicImage = $("<img>").attr("src", imageUrl);
+
+//get image by data
+topicImage.attr("data-state");
+
+topicDiv.append(topicImage);
+//add class
+/*
+topicImage.addClass("gif")
+$(".gif").on("click", function() {
+    var state = $(this).attr("data-state");
+if (state==="still"){
+    $(this).attr("src", $(this).attr("data-animate"));
+    $(this).attr("data-state", "animate");
+} else{
+    $(this).attr("src", $(this).attr("data-still"));
+    $(this).attr("data-state", "still");
+}
+});
+*/
+
+ // Putting the entire movie above the previous movies
+ $("#topics-view").append(topicDiv);
+ console.log(topicDiv)
+        });
+
+      }
+      // Function for displaying movie data
+      function renderButtons() {
+
+// Deleting the movies prior to adding new movies
+$("#buttons-view").empty();
+
+// Looping through the array of movies
+for (var i = 0; i < topics.length; i++) {
+
+  // Then dynamicaly generating buttons for each movie in the array
+  var a = $("<button>");
+  // Adding a class of movie-btn to our button
+  a.addClass("topic-btn");
+  // Adding a data-attribute
+  a.attr("data-name", topics[i]);
+  // Providing the initial button text
+  a.text(topics[i]);
+  // Adding the button to the buttons-view div
+  $("#buttons-view").prepend(a);
+}
+}
+
+// This function handles events where a movie button is clicked
+$("#add-topic").on("click", function(event) {
+event.preventDefault();
+// This line grabs the input from the textbox
+var topic = $("#topic-input").val().trim();
+
+// Adding topics  to our array
+topics.push(topic);
+
+// Calling renderButtons which handles the processing of our movie array
+renderButtons();
+});
+
+// Adding a click event listener to all elements with a class of "movie-btn"
+$(document).on("click", ".topic-btn", displaytopicInfo);
+
+// Calling the renderButtons function to display the intial buttons
+renderButtons();
+    
+     </script>
+</body>
+</html>
